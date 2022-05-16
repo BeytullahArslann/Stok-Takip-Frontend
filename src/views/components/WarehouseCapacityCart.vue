@@ -3,7 +3,7 @@
   <b-card no-body>
     <b-card-header>
       <h4 class="mb-0">Depo Adı: {{ warehouse.name }}</h4>
-      <b-card-text class="font-medium-5 mb-0">
+      <b-card-text v-if="roleId == 1" class="font-medium-5 mb-0">
         <router-link
           :to="{
             name: 'updateWarehouse',
@@ -48,7 +48,7 @@
           py-1
         "
       >
-        <b-card-text class="text-muted mb-0"> Mevcut Ürün Sayısı </b-card-text>
+        <b-card-text class="text-muted mb-0"> Product Quantity </b-card-text>
         <h3 class="font-weight-bolder mb-0">
           {{ capacity[0] == 0 ? 0 : capacity.quantity }}
         </h3>
@@ -58,7 +58,7 @@
         cols="6"
         class="border-top d-flex align-items-between flex-column py-1"
       >
-        <b-card-text class="text-muted mb-0"> Depo Kapasitesi </b-card-text>
+        <b-card-text class="text-muted mb-0"> Warehouse Capacity </b-card-text>
         <h3 class="font-weight-bolder mb-0">
           {{ warehouse.capacity }}
         </h3>
@@ -105,6 +105,7 @@ export default {
   },
   data() {
     return {
+      roleId: JSON.parse(localStorage.getItem("userData")).roleId,
       goalOverviewRadialBar: {
         chart: {
           height: 245,
@@ -173,11 +174,11 @@ export default {
   created() {
     console.log(this.capacity);
     if (this.capacity[0] == 0) {
-      console.log("boss");
+      //console.log("boss");
       this.series = [0];
     } else {
       this.series = [
-        ("seris", (this.capacity.quantity / this.warehouse.capacity) * 100),
+        ("seris", (this.capacity.quantity / this.warehouse.capacity) * 100).toFixed(2),
       ];
     }
     console.log("newSeries", this.series);

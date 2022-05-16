@@ -13,7 +13,7 @@
           />
         </div>
       </b-form-group>
-      <b-link class="col-2 row" :to="{ name: 'createUser' }">
+      <b-link v-if="roleId == 1" class="col-2 row" :to="{ name: 'createProduct' }">
         <b-button class="col-12" variant="primary">Add New Product</b-button>
       </b-link>
     </div>
@@ -28,7 +28,7 @@
       <template #cell(Birthday)="data">
         <!-- {{ data.item.Birthday.slice(0, 10) }} -->
       </template>
-      <template #cell(actions)="data">
+      <template v-if="roleId == 1" #cell(actions)="data">
         <b-dropdown
           variant="link"
           no-caret
@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      roleId: JSON.parse(localStorage.getItem("userData")).roleId,
       filtredItems: null,
       searchTerm: "",
       items: [],

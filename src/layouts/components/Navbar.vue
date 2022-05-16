@@ -39,29 +39,14 @@
           />
         </template>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <b-dropdown-item :to="{ name: 'updateUser', params: { id: user.userId } }" link-class="d-flex align-items-center">
           <feather-icon size="16" icon="UserIcon" class="mr-50" />
           <span>Profile</span>
         </b-dropdown-item>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon size="16" icon="MailIcon" class="mr-50" />
-          <span>Inbox</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon size="16" icon="CheckSquareIcon" class="mr-50" />
-          <span>Task</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon size="16" icon="MessageSquareIcon" class="mr-50" />
-          <span>Chat</span>
-        </b-dropdown-item>
-
         <b-dropdown-divider />
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <b-dropdown-item link-class="d-flex align-items-center" @click="logout()">
           <feather-icon size="16" icon="LogOutIcon" class="mr-50" />
           <span>Logout</span>
         </b-dropdown-item>
@@ -81,6 +66,7 @@ import {
   BAvatar,
 } from "bootstrap-vue";
 import DarkToggler from "@core/layouts/components/app-navbar/components/DarkToggler.vue";
+import router from '@/router';
 
 export default {
   data() {
@@ -93,6 +79,11 @@ export default {
     getRole: function() {
       return this.roles.filter(e => e.id == this.user.roleId )
     },
+    logout: function(){
+      localStorage.userData = null
+      localStorage.loggedIn = false
+      router.push("/login")
+    }
   },
   components: {
     BLink,

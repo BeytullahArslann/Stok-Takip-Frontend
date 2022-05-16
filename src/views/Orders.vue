@@ -4,7 +4,7 @@
     <div class="col-12 mb-1 row">
       <b-form-group class="col-10">
         <div class="d-flex align-items-end col-12">
-          <label class="mr-1 col-2"><h4>SEARCH USER</h4> </label>
+          <label class="mr-1 col-2"><h4>SEARCH ORDER</h4> </label>
           <b-form-input
             v-model="searchTerm"
             placeholder="First Name / Surname"
@@ -13,23 +13,15 @@
           />
         </div>
       </b-form-group>
-      <b-link class="col-2 row" :to="{ name: 'createUser' }">
-        <b-button class="col-12" variant="primary"
-          >Add New User</b-button
-        >
+      <b-link class="col-2 row" :to="{ name: 'createOrder' }">
+        <b-button class="col-12" variant="primary">Add New Order</b-button>
       </b-link>
     </div>
 
     <b-table class="col-12" responsive="sm" :items="filtredItems">
-      <template #cell(Role)="data">
-        {{ getRole(data).roleName }}
-        <!-- <b-badge :variant="status[1][data.value]">
-          {{ status[0][data.value] }}
-        </b-badge> -->
-      </template>
-      <template #cell(Birthday)="data">
+      <!-- <template #cell(Birthday)="data">
         {{ data.item.Birthday.slice(0, 10) }}
-      </template>
+      </template> -->
       <template #cell(actions)="data">
         <b-dropdown
           variant="link"
@@ -54,8 +46,11 @@
               <span class="align-middle ml-50">Edit</span>
             </router-link>
           </b-dropdown-item>
-
-          <b-dropdown-item @click="deleteUser(data.item['User Id'])">
+          <b-dropdown-item @click="completeOrder(data.item['Order Id'])">
+            <feather-icon icon="TrashIcon" />
+            <span class="align-middle ml-50">Complete</span>
+          </b-dropdown-item>
+          <b-dropdown-item @click="deleteOrder(data.item['Order Id'])">
             <feather-icon icon="TrashIcon" />
             <span class="align-middle ml-50">Delete</span>
           </b-dropdown-item>
@@ -68,7 +63,7 @@
 <script>
 /* eslint-disable*/
 import { HTTP } from "@/main-source";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import {
   BCard,
   BCardHeader,
@@ -100,44 +95,65 @@ export default {
   },
   data() {
     return {
+      products: null,
       filtredItems: null,
       searchTerm: "",
       items: [],
       roles: null,
+      user: JSON.parse(localStorage.getItem("userData")),
+      users: [],
+      data: null
     };
   },
-  created() {
-    this.getAllUser();
-    this.getAllRole();
+  async created() {
+    this.getOrders();
   },
   methods: {
-    getAllRole() {
-      HTTP.get("Role/getAllRoles")
-        .then((result) => {
-          this.roles = result.data;
-        })
-        .catch((err) => {});
+    dataFiller(data) {
+      console.log(this.data)
+      data.forEach((element) => {
+        this.items.push({
+          "Order Id": element.orderId,
+          "User Name": element.userName,
+          "Total Price": element.price,
+          Date: element.date.slice(0, 18),
+          Type: element.type == true ? "Buy" : "Sel",
+          Actions: null,
+        });
+      });
+      this.filtredItems = this.items;
+      console.log(this.filtredItems);
     },
-    getAllUser() {
-      HTTP.get("User/getAllUser")
-        .then((result) => {
-          result.data.forEach((element) => {
-            this.items.push({
-              "User Id": element.userId,
-              "First Name": element.userName,
-              Surname: element.userSurname,
-              Email: element.email,
-              Role: element.roleId,
-              Birthday: element.birthDate,
-              Active: element.isActive,
-              Actions: null,
-            });
-          });
-          this.filtredItems = this.items;
-        })
-        .catch((err) => {});
+    getOrders() {
+      if (this.user.roleId == 1) {
+        HTTP.get("Order/getOrderTable")
+          .then((result) => {
+            this.data = result.data
+            this.dataFiller(result.data)
+          })
+          .catch((err) => {});
+      } else {
+        HTTP.get("Order/getOrderTableByUserId/" + this.user.userId)
+          .then((result) => {
+            this.data = result.data
+            this.dataFiller(result.data)
+          })
+          .catch((err) => {});
+      }
     },
-    deleteUser(id) {
+    completeOrder(id){
+      HTTP.put("Order/completeOrder/"+id).then((result) => {
+        this.items.forEach(z => {
+          if(z["Order Id"] == id) {
+          z.Completed = true
+        }})
+        console.log(this.items)
+        this.filterOrder()
+      }).catch((err) => {
+        
+      });
+    },
+    deleteOrder(id) {
       Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -151,10 +167,10 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          HTTP.delete("User/deleteUser/" + id)
+          HTTP.delete("Order/deleteOrder/" + id)
             .then((result) => {
               this.items = this.items.filter((z) => z["User Id"] != id);
-              this.filterUser()
+              this.filterOrder();
             })
             .catch((err) => {});
           Swal.fire({
@@ -182,26 +198,25 @@ export default {
       console.log(this.roles.filter((z) => z.id == data.item.Role));
       return this.roles.filter((z) => z.id == data.item.Role)[0];
     },
-    filterUser: function () {
+    filterOrder: function () {
       // console.log("filter")
       this.filtredItems = this.items.filter((e) =>
         this.searchTerm == ""
           ? true
-          : e["First Name"]
+          : e["User Name"]
               .toLowerCase()
-              .includes(this.searchTerm.toLowerCase()) ||
-            e.Surname.toLowerCase().includes(this.searchTerm.toLowerCase())
+              .includes(this.searchTerm.toLowerCase())
       );
       // console.log(this.filtredMovies , this.movies)
     },
   },
   watch: {
     searchTerm: function () {
-      this.filterUser();
+      this.filterOrder();
     },
   },
 };
 </script>
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-sweetalert.scss';
+@import "@core/scss/vue/libs/vue-sweetalert.scss";
 </style>

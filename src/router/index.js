@@ -36,6 +36,36 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/orders',
+      name: 'orders',
+      component: () => import('@/views/Orders.vue'),
+      meta: {
+        requiresAuth: true,
+        pageTitle: 'Orders',
+        breadcrumb: [
+          {
+            text: 'Orders',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/createOrder',
+      name: 'createOrder',
+      component: () => import('@/views/CreateOrder.vue'),
+      meta: {
+        requiresAuth: true,
+        pageTitle: 'Create Order',
+        breadcrumb: [
+          {
+            text: 'Create Order',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/products',
       name: 'products',
       component: () => import('@/views/Products.vue'),
@@ -171,21 +201,6 @@ const router = new VueRouter({
       },
     },
     {
-      requiresAuth: true,
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
-      meta: {
-        pageTitle: 'Second Page',
-        breadcrumb: [
-          {
-            text: 'Second Page',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
       path: '/error-404',
       name: 'error-404',
       component: () => import('@/views/error/Error404.vue'),
@@ -212,21 +227,24 @@ router.afterEach(() => {
 
 router.beforeEach((to, from, next) => {
   // to and from are both route objects. must call `next`.
-  //console.log(JSON.parse(localStorage.getItem("userData")) == null)
-  if (JSON.parse(localStorage.getItem("userData")) == null && to.path != '/login') {
-    console.log("if")
+  console.log(!localStorage.getItem("loggedIn")  && to.path != '/login')
+  if (!localStorage.getItem("loggedIn")  && to.path != '/login') {
+    console.log('atti')
     next({
       path: '/login',
     });
+  }else if(!localStorage.getItem("loggedIn")  && to.path == '/login') {
+    next();
   }
   else {
+    console.log('atmadi')
     let user = typeof (JSON.parse(localStorage.getItem("userData"))) != "undefined" ? JSON.parse(localStorage.getItem("userData")) : { email: '', password: '' }
     //console.log(user)
     if (to.matched.some((record) => record.meta.requiresAuth)) {
       HTTP.get("User/login?Email=" + user.email + "&password=" + user.password).then((result) => {
         if (result.data[0]) {
           localStorage.setItem("userData", JSON.stringify(result.data[0]))
-
+          localStorage.setItem("loggedIn", true)
         }
         else {
           next({
@@ -237,6 +255,34 @@ router.beforeEach((to, from, next) => {
         console.log(err)
       });
     }
+  }
+  console.log("buraya geldi")
+  let roleId = JSON.parse(localStorage.getItem("userData")).roleId
+  let id = JSON.parse(localStorage.getItem("userData")).userId
+  if (roleId != 1 && to.path == '/Users') {
+    next({
+      path: '/',
+    });
+  }
+  if (roleId != 1 && to.path == '/updateUser') {
+    next({
+      path: '/',
+    });
+  }
+  if (roleId != 1 && (to.name == 'updateUser' && to.path != '/updateUser/' + id)) {
+    next({
+      path: '/',
+    });
+  }
+  if (roleId != 1 && (to.path == '/createProduct' || to.name == 'updateProduct')) {
+    next({
+      path: '/',
+    });
+  }
+  if (roleId != 1 && to.name == 'updateProduct') {
+    next({
+      path: '/',
+    });
   }
 
   next();

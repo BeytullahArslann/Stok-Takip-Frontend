@@ -1,8 +1,36 @@
 <!--  eslint-disable -->
 <template>
   <div class="div">
-    <warehouse-detail-top-bar :warehouse="warehouse[0]" :warehouseCapacity="warehouseCapacity" :warehouseAdmin="user[0]"/>
-    <b-table responsive="sm" :items="items"/>
+    <warehouse-detail-top-bar
+      :warehouse="warehouse[0]"
+      :warehouseCapacity="warehouseCapacity"
+      :warehouseAdmin="user[0]"
+    />
+    <b-card v-if="roleId == 1">
+      <b-row>
+        <b-col offset="4" md="6">
+          <b-form-group label="Add Product" label-for="mc-product">
+            <div class="form-label-group">
+              <v-select
+                id="mc-product"
+                v-model="selectedProduct"
+                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                label="title"
+                :options="productsOption"
+                aria-required="true"
+              />
+            </div>
+          </b-form-group> </b-col
+      ><b-col md="2">
+        <b-button class="mt-1" variant="primary" @click="addNewProduct()"
+          >Add New Product</b-button
+        >
+      </b-col>
+      </b-row>
+    </b-card>
+    <b-card>
+      <b-table responsive="sm" :items="items" />
+    </b-card>
   </div>
 </template>
 
@@ -20,20 +48,25 @@ import {
   BCardText,
   BInputGroupPrepend,
   BTable,
+  BCard,
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import Cleave from "vue-cleave-component";
 import vSelect from "vue-select";
 import { HTTP } from "@/main-source";
-import warehouseDetailTopBar from '@/views/components/WarehouseDetailsTopBar.vue'
+import warehouseDetailTopBar from "@/views/components/WarehouseDetailsTopBar.vue";
 
 export default {
   data() {
     return {
+      roleId: JSON.parse(localStorage.getItem("userData")).roleId,
+      selectedProduct: null,
+      products: null,
+      productsOption: [],
       items: null,
       warehouseAdmin: null,
       warehouseCapacity: null,
-      currentId : this.$route.params.id,
+      currentId: this.$route.params.id,
       warehouse: null,
       option: [],
       user: null,
@@ -52,42 +85,66 @@ export default {
     };
   },
   async created() {
-    
-    HTTP.get("Warehouse/warehouseProductsDetail/"+this.currentId)
-      .then((result) => {
-        this.items = result.data
-        console.log(this.items)
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+   this.getWarehouseDetails()
     HTTP.get("Warehouse/warehouseCapacity")
       .then((result) => {
-        console.log(result);
-        this.warehouseCapacity = result.data.filter(z => z.warehouseId == this.currentId)[0];
+        //console.log(result);
+        this.warehouseCapacity = result.data.filter(
+          (z) => z.warehouseId == this.currentId
+        )[0];
       })
       .catch((err) => {
         console.log(err);
       });
-    await HTTP.get("Warehouse/getWarehouseById/"+this.currentId)
-      .then((result) => {
-        console.log(result.data);
+    await HTTP.get("Warehouse/getWarehouseById/" + this.currentId).then(
+      (result) => {
+        //console.log(result.data);
         this.warehouse = result.data;
         HTTP.get("User/getUser/" + result.data[0].adminId)
+          .then((result) => {
+            //console.log(result.data);
+            this.user = result.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    );
+  },
+  watch: {},
+  methods: {
+    getWarehouseDetails : function (){
+       HTTP.get("Warehouse/warehouseProductsDetail/" + this.currentId)
       .then((result) => {
-        console.log(result.data);
-        this.user = result.data;
+        this.items = result.data;
+        console.log("items", this.items);
+        HTTP.get("Product").then((product) => {
+          let productsId = [];
+          result.data.forEach((element) => {
+            productsId.push(element.productId);
+          });
+          this.products = product.data.forEach((e) => {
+            console.log(productsId.includes(e.id));
+            if (!productsId.includes(e.id)) {
+              this.productsOption.push({ id: e.id, title: e.name });
+            }
+          });
+        });
       })
       .catch((err) => {
         console.log(err);
       });
+    },
+    addNewProduct: function(){
+      HTTP.post("WarehouseProduct" , {productId: this.selectedProduct.id, warehouseId: this.currentId , quantity: 0}).then((result) => {
+        //this.productsOption = this.productsOption.filter(e => e.id != this.selectedProduct.id)
+        this.productsOption = []
+        this.selectedProduct = null
+        this.getWarehouseDetails()
+      }).catch((err) => {
+        
       });
-    
-  },
-  watch: {
-  },
-  methods: {
-
+    }
   },
   components: {
     BRow,
@@ -103,7 +160,8 @@ export default {
     Cleave,
     vSelect,
     warehouseDetailTopBar,
-    BTable
+    BTable,
+    BCard,
   },
   directives: {
     Ripple,

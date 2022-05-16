@@ -17,7 +17,7 @@
               </h4>
                <span class="card-text">{{ warehouse.code }}</span> 
             </div>
-            <div class="d-flex flex-wrap">
+            <div v-if="roleId == 1" class="d-flex flex-wrap">
               <b-button
                 :to="{ name: 'updateWarehouse', params: { id: warehouse.id } }"
                 variant="primary"
@@ -158,7 +158,7 @@ import Swal from 'sweetalert2'
 export default {
   data() {
     return {
-      adminName:"asd",
+      roleId: JSON.parse(localStorage.getItem("userData")).roleId,
     }
   },
   methods: {

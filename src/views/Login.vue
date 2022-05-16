@@ -259,14 +259,10 @@ export default {
              localStorage.setItem("roles",JSON.stringify(roles.data))
           })
           localStorage.setItem("userData",JSON.stringify(result.data[0]))
+          localStorage.setItem("loggedIn",true)
           //console.log(result.data[0])
-
-
-
-
-          if(result.data[0].roleId == 1){
             router.push('/')
-          }
+          
           
             }
             else{

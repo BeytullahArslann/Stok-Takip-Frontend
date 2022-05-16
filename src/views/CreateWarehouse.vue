@@ -150,23 +150,6 @@ export default {
       });
   },
   watch: {
-    // "form.warehouseName": function () {
-    //   console.log(this.form.warehouseName.toLowerCase())
-    //   let lowerCase = this.form.warehouseName.toLowerCase();
-    //   this.warehouses.forEach((e) =>
-    //     (e.warehouseName.toLowerCase() == lowerCase)
-    //       ? (this.sameName = true)
-    //       : (this.sameName = false)
-    //   );
-    // },
-    // "form.warehouseCode": function () {
-    //     this.warehouses.forEach((e) =>
-    //     e.warehouseCode.toLowerCase() == this.form.warehouseCode.toLowerCase()
-    //       ? (this.sameCode = true)
-    //       : (this.sameCode = false)
-    //   );
-    //   console.log(this.sameCode)
-    // },
   },
   methods: {
     createWarehouse: function () {

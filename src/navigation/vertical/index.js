@@ -5,13 +5,19 @@ export default [
     icon: 'HomeIcon',
   },
   {
-    title: 'Second Page',
-    route: 'second-page',
-    icon: 'FileIcon',
-  },
-  {
     title: 'Users',
     route: 'users',
     icon: 'UsersIcon',
   },
+  {
+    title: 'Products',
+    route: 'products',
+    icon: 'PackageIcon',
+  },
+  {
+    title: 'Orders',
+    route: 'orders',
+    icon: 'PackageIcon',
+  },
+
 ]
