@@ -103,8 +103,7 @@ import Ripple from "vue-ripple-directive";
 import Cleave from "vue-cleave-component";
 import vSelect from "vue-select";
 import { HTTP } from "@/main-source";
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   data() {
@@ -131,26 +130,19 @@ export default {
   created() {
     HTTP.get("Warehouse/getAll")
       .then((result) => {
-        //console.log(result.data);
         this.warehouses = result.data;
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
     HTTP.get("Warehouse/getWarehouseById/" + this.currentId).then((result) => {
-      console.log(result.data);
       this.warehouses = result.data;
       this.form = result.data[0];
       HTTP.get("User/getAllUser").then((result) => {
-        //console.log(result.data);
         this.users = result.data;
         result.data.forEach((element) => {
           this.option.push({ id: element.userId, title: element.userName });
         });
         let adminId = this.form.adminId;
         this.form.adminId = this.option.filter((e) => e.id == adminId);
-        console.log("bu", this.form.adminId);
-        console.log(this.option);
       });
     });
   },
@@ -159,11 +151,9 @@ export default {
     updateWarehouse: function () {
       if (this.form.capacity != null && this.form.adminId != null) {
         this.form.adminId = this.form.adminId[0].id;
-        console.log(this.form.adminId, this.form.adminId.id);
         this.form.capacity = parseInt(this.form.capacity.replace(/,/g, ""));
         HTTP.put("Warehouse/updateWarehouse/" + this.currentId, this.form)
           .then((result) => {
-            //console.log(result)
             if (result.status == 200) {
               this.$toast({
                 component: ToastificationContent,
@@ -175,9 +165,7 @@ export default {
               });
             }
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch((err) => {});
       }
     },
   },

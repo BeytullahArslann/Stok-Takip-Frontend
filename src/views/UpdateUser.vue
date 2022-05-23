@@ -86,7 +86,7 @@
             />
           </b-form-group>
         </b-col>
-        <b-col md="6">
+        <b-col v-if="roleId == 1" md="6">
           <b-form-group label="Role" label-for="mc-role">
             <div class="form-label-group">
               <v-select
@@ -138,6 +138,7 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      roleId: JSON.parse(localStorage.getItem("userData")).roleId,
       currentId: this.$route.params.id,
       roles: [],
       selectedRole: null,
@@ -166,7 +167,6 @@ export default {
     await HTTP.get("User/getUser/" + this.currentId)
       .then((result) => {
         this.form = result.data[0];
-        console.log(this.form);
       })
       .catch((err) => {});
     HTTP.get("Role/getAllRoles")
@@ -177,7 +177,6 @@ export default {
           }
           this.roles.push({ id: element.id, title: element.roleName });
         });
-        console.log(this.roles);
       })
       .catch((err) => {});
   },

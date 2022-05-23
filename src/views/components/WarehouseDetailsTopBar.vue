@@ -129,18 +129,6 @@
               {{ warehouse.address }}
             </td>
           </tr>
-          <!-- <tr>
-            <th>
-              <feather-icon
-                icon="PhoneIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Contact</span>
-            </th>
-            <td>
-              {{ userData.contact }}
-            </td>
-          </tr> -->
         </table>
       </b-col>
     </b-row>
@@ -177,7 +165,6 @@ export default {
       }).then(result => {
         if (result.value) {
           HTTP.delete("warehouse/deleteWarehouse/"+this.warehouse.id).then((result) => {
-            console.log(result)
             this.$parent.getWarehouse();
           }).catch((err) => {
             
@@ -206,10 +193,6 @@ export default {
   components: {
     BCard, BButton, BRow, BCol, BAvatar,
   },
-  created() {
-    
-    console.log(this.warehouse)
-  },
   props: {
     warehouse: {
       type:Object
@@ -224,13 +207,6 @@ export default {
         }
   }
   },
-  // setup() {
-  //   const { resolveUserRoleVariant } = useUsersList()
-  //   return {
-  //     avatarText,
-  //     resolveUserRoleVariant,
-  //   }
-  // },
 }
 </script>
 

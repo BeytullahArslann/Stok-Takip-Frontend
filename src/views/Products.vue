@@ -13,21 +13,16 @@
           />
         </div>
       </b-form-group>
-      <b-link v-if="roleId == 1" class="col-2 row" :to="{ name: 'createProduct' }">
+      <b-link
+        v-if="roleId == 1"
+        class="col-2 row"
+        :to="{ name: 'createProduct' }"
+      >
         <b-button class="col-12" variant="primary">Add New Product</b-button>
       </b-link>
     </div>
 
     <b-table class="col-12" responsive="sm" :items="filtredItems">
-      <template #cell(Role)="data">
-        <!-- {{ getRole(data).roleName }} -->
-        <!-- <b-badge :variant="status[1][data.value]">
-          {{ status[0][data.value] }}
-        </b-badge> -->
-      </template>
-      <template #cell(Birthday)="data">
-        <!-- {{ data.item.Birthday.slice(0, 10) }} -->
-      </template>
       <template v-if="roleId == 1" #cell(actions)="data">
         <b-dropdown
           variant="link"
@@ -66,7 +61,7 @@
 <script>
 /* eslint-disable*/
 import { HTTP } from "@/main-source";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import {
   BCard,
   BCardHeader,
@@ -175,19 +170,15 @@ export default {
       });
     },
     getRole(data) {
-      //console.log(data.item["User Id"])
-      console.log(this.roles.filter((z) => z.id == data.item.Role));
       return this.roles.filter((z) => z.id == data.item.Role)[0];
     },
     filterProduct: function () {
-      // console.log("filter")
       this.filtredItems = this.items.filter((e) =>
         this.searchTerm == ""
           ? true
           : e["Name"].toLowerCase().includes(this.searchTerm.toLowerCase()) ||
             e.Description.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      // console.log(this.filtredMovies , this.movies)
     },
   },
   watch: {
@@ -198,5 +189,5 @@ export default {
 };
 </script>
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-sweetalert.scss';
+@import "@core/scss/vue/libs/vue-sweetalert.scss";
 </style>

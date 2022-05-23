@@ -88,8 +88,7 @@ import Ripple from "vue-ripple-directive";
 import Cleave from "vue-cleave-component";
 import vSelect from "vue-select";
 import { HTTP } from "@/main-source";
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   data() {
@@ -118,7 +117,6 @@ export default {
       this.form.price = parseInt(this.form.price.replace(/,/g, ""));
       HTTP.post("product/addProduct", this.form)
         .then((result) => {
-          console.log(result);
           if (result.status == 200) {
             this.$toast({
               component: ToastificationContent,
@@ -136,9 +134,7 @@ export default {
             };
           }
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     },
   },
   components: {

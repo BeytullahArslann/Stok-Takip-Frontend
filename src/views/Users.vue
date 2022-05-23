@@ -14,18 +14,13 @@
         </div>
       </b-form-group>
       <b-link class="col-2 row" :to="{ name: 'createUser' }">
-        <b-button class="col-12" variant="primary"
-          >Add New User</b-button
-        >
+        <b-button class="col-12" variant="primary">Add New User</b-button>
       </b-link>
     </div>
 
     <b-table class="col-12" responsive="sm" :items="filtredItems">
       <template #cell(Role)="data">
         {{ getRole(data).roleName }}
-        <!-- <b-badge :variant="status[1][data.value]">
-          {{ status[0][data.value] }}
-        </b-badge> -->
       </template>
       <template #cell(Birthday)="data">
         {{ data.item.Birthday.slice(0, 10) }}
@@ -68,7 +63,7 @@
 <script>
 /* eslint-disable*/
 import { HTTP } from "@/main-source";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import {
   BCard,
   BCardHeader,
@@ -154,7 +149,7 @@ export default {
           HTTP.delete("User/deleteUser/" + id)
             .then((result) => {
               this.items = this.items.filter((z) => z["User Id"] != id);
-              this.filterUser()
+              this.filterUser();
             })
             .catch((err) => {});
           Swal.fire({
@@ -178,12 +173,9 @@ export default {
       });
     },
     getRole(data) {
-      //console.log(data.item["User Id"])
-      console.log(this.roles.filter((z) => z.id == data.item.Role));
       return this.roles.filter((z) => z.id == data.item.Role)[0];
     },
     filterUser: function () {
-      // console.log("filter")
       this.filtredItems = this.items.filter((e) =>
         this.searchTerm == ""
           ? true
@@ -192,7 +184,6 @@ export default {
               .includes(this.searchTerm.toLowerCase()) ||
             e.Surname.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      // console.log(this.filtredMovies , this.movies)
     },
   },
   watch: {
@@ -203,5 +194,5 @@ export default {
 };
 </script>
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-sweetalert.scss';
+@import "@core/scss/vue/libs/vue-sweetalert.scss";
 </style>

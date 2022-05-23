@@ -103,8 +103,7 @@ import Ripple from "vue-ripple-directive";
 import Cleave from "vue-cleave-component";
 import vSelect from "vue-select";
 import { HTTP } from "@/main-source";
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   data() {
@@ -130,38 +129,28 @@ export default {
   created() {
     HTTP.get("Warehouse/getAll")
       .then((result) => {
-        console.log(result.data);
         this.warehouses = result.data;
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
     HTTP.get("User/getAllUser")
       .then((result) => {
-        console.log(result.data);
         this.users = result.data;
         result.data.forEach((element) => {
           this.option.push({ id: element.userId, title: element.userName });
         });
-        console.log(this.option);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   },
-  watch: {
-  },
+  watch: {},
   methods: {
     createWarehouse: function () {
-        if (this.form.capacity != null && this.form.adminId != null){
-            this.form.adminId = this.form.adminId.id
-            this.form.capacity = parseInt(this.form.capacity.replace(/,/g,""))
-            HTTP.post("Warehouse/addWarehouse",this.form).then((result) => {
-                console.log(result)
-            }).catch((err) => {
-                console.log(err)
-            });
-        }
+      if (this.form.capacity != null && this.form.adminId != null) {
+        this.form.adminId = this.form.adminId.id;
+        this.form.capacity = parseInt(this.form.capacity.replace(/,/g, ""));
+        HTTP.post("Warehouse/addWarehouse", this.form)
+          .then((result) => {})
+          .catch((err) => {});
+      }
     },
   },
   components: {

@@ -227,19 +227,15 @@ router.afterEach(() => {
 
 router.beforeEach((to, from, next) => {
   // to and from are both route objects. must call `next`.
-  console.log(!localStorage.getItem("loggedIn")  && to.path != '/login')
-  if (!localStorage.getItem("loggedIn")  && to.path != '/login') {
-    console.log('atti')
+  if (!localStorage.getItem("loggedIn") && to.path != '/login') {
     next({
       path: '/login',
     });
-  }else if(!localStorage.getItem("loggedIn")  && to.path == '/login') {
+  } else if (!localStorage.getItem("loggedIn") && to.path == '/login') {
     next();
   }
   else {
-    console.log('atmadi')
     let user = typeof (JSON.parse(localStorage.getItem("userData"))) != "undefined" ? JSON.parse(localStorage.getItem("userData")) : { email: '', password: '' }
-    //console.log(user)
     if (to.matched.some((record) => record.meta.requiresAuth)) {
       HTTP.get("User/login?Email=" + user.email + "&password=" + user.password).then((result) => {
         if (result.data[0]) {
@@ -252,11 +248,9 @@ router.beforeEach((to, from, next) => {
           });
         }
       }).catch((err) => {
-        console.log(err)
       });
     }
   }
-  console.log("buraya geldi")
   let roleId = JSON.parse(localStorage.getItem("userData")).roleId
   let id = JSON.parse(localStorage.getItem("userData")).userId
   if (roleId != 1 && to.path == '/Users') {

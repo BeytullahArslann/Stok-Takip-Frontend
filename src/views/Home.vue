@@ -49,12 +49,6 @@ export default {
       filtredWarehouses: null,
       warehouses: null,
       warehouseCapacity: null,
-      goalOverview: {
-        completed: "786,617",
-        inProgress: "13,561",
-      },
-      // user : this.$store.state.user.name,
-      // user2 : localStorage.getItem("name"),
     };
   },
   components: {
@@ -70,45 +64,32 @@ export default {
     this.getWarehouse();
     HTTP.get("Warehouse/warehouseCapacity")
       .then((result) => {
-        console.log(result);
         this.warehouseCapacity = result.data;
       })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    console.log(this.user2);
-    console.log(this.user);
+      .catch((err) => {});
   },
   methods: {
-    getWarehouse: function (){
+    getWarehouse: function () {
       HTTP.get("Warehouse/getAll")
-      .then((result) => {
-        console.log(result);
-        this.warehouses = result.data;
-        this.filtredWarehouses = result.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((result) => {
+          this.warehouses = result.data;
+          this.filtredWarehouses = result.data;
+        })
+        .catch((err) => {});
     },
     filterWarehouse: function () {
-      // console.log("filter")
       this.filtredWarehouses = this.warehouses.filter((e) =>
         this.searchTerm == ""
           ? true
           : e.name.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      // console.log(this.filtredMovies , this.movies)
     },
     capacity: function (id) {
-      console.log(this.warehouseCapacity.filter((e) => e.warehouseId == id));
       return this.warehouseCapacity.filter((e) => e.warehouseId == id);
     },
   },
   watch: {
     searchTerm: function () {
-      //console.log("search")
       this.filterWarehouse();
     },
   },

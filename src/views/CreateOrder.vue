@@ -94,7 +94,7 @@
       <section slot="pdf-content">
         <!-- PDF Content Here -->
         <div class="">
-          <h4>Tutar {{  form.quantity  }}</h4>
+          <h4>Tutar {{ form.quantity }}</h4>
         </div>
       </section>
     </vue-html2pdf>
@@ -164,12 +164,6 @@ export default {
     };
   },
   created() {
-    // HTTP.get("Product")
-    //   .then((result) => {
-    //     this.products = result.data
-    //     result.data.forEach(e => this.productOptions.push({id : e.id, title: e.name}))
-    //   })
-    //   .catch((err) => {});
     HTTP.get("Warehouse/getAll")
       .then((result) => {
         this.warehouses = result.data;
@@ -191,7 +185,6 @@ export default {
   },
   methods: {
     getProducts() {
-      console.log(this.selectedWarehouse);
       HTTP.get("Product/getProductsByWarehouse/" + this.selectedWarehouse.id)
         .then((result) => {
           this.products = result.data;
@@ -204,12 +197,6 @@ export default {
     },
     validationForm() {
       this.$refs.loginValidation.validate().then((success) => {
-        console.log(
-          this.selectedProduct,
-          this.selectedWarehouse,
-          this.form.quantity,
-          this.form.day && this.selectedType != null
-        );
         if (
           success &&
           this.selectedProduct != null &&
@@ -222,8 +209,6 @@ export default {
           this.form.type = this.selectedType.id == 1 ? true : false;
           this.form.warehouseId = this.selectedWarehouse.id;
           this.form.productId = this.selectedProduct.id;
-
-          console.log(this.form);
 
           HTTP.post("OrderProduct/addProduct", this.form)
             .then((result) => {
@@ -245,7 +230,6 @@ export default {
                   birthDate: "",
                   roleId: null,
                 };
-                
               } else if (result.status == 500) {
                 this.$toast({
                   component: ToastificationContent,

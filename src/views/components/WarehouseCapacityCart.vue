@@ -172,16 +172,13 @@ export default {
     };
   },
   created() {
-    console.log(this.capacity);
     if (this.capacity[0] == 0) {
-      //console.log("boss");
       this.series = [0];
     } else {
       this.series = [
         ("seris", (this.capacity.quantity / this.warehouse.capacity) * 100).toFixed(2),
       ];
     }
-    console.log("newSeries", this.series);
   },
   methods: {
     deleteWarehouse() {
@@ -199,7 +196,6 @@ export default {
       }).then(result => {
         if (result.value) {
           HTTP.delete("warehouse/deleteWarehouse/"+this.warehouse.id).then((result) => {
-            console.log(result)
             this.$parent.getWarehouse();
           }).catch((err) => {
             
@@ -227,7 +223,6 @@ export default {
   },
   computed: {
     countCart: function () {
-      console.log((this.warehouse.capacity / this.capacity.quantity) * 100);
       return (this.warehouse.capacity / this.capacity.quantity) * 100;
     },
   },

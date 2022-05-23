@@ -167,7 +167,6 @@ export default {
         result.data.forEach((element) => {
           this.roles.push({ id: element.id, title: element.roleName });
         });
-        console.log(this.roles);
       })
       .catch((err) => {});
   },

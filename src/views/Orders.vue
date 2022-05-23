@@ -19,10 +19,7 @@
     </div>
 
     <b-table class="col-12" responsive="sm" :items="filtredItems">
-      <!-- <template #cell(Birthday)="data">
-        {{ data.item.Birthday.slice(0, 10) }}
-      </template> -->
-      <template #cell(actions)="data">
+      <template #cell(actions)="data" v-if="user.roleId == 1">
         <b-dropdown
           variant="link"
           no-caret
@@ -102,7 +99,7 @@ export default {
       roles: null,
       user: JSON.parse(localStorage.getItem("userData")),
       users: [],
-      data: null
+      data: null,
     };
   },
   async created() {
@@ -110,7 +107,6 @@ export default {
   },
   methods: {
     dataFiller(data) {
-      console.log(this.data)
       data.forEach((element) => {
         this.items.push({
           "Order Id": element.orderId,
@@ -122,36 +118,35 @@ export default {
         });
       });
       this.filtredItems = this.items;
-      console.log(this.filtredItems);
     },
     getOrders() {
       if (this.user.roleId == 1) {
         HTTP.get("Order/getOrderTable")
           .then((result) => {
-            this.data = result.data
-            this.dataFiller(result.data)
+            this.data = result.data;
+            this.dataFiller(result.data);
           })
           .catch((err) => {});
       } else {
         HTTP.get("Order/getOrderTableByUserId/" + this.user.userId)
           .then((result) => {
-            this.data = result.data
-            this.dataFiller(result.data)
+            this.data = result.data;
+            this.dataFiller(result.data);
           })
           .catch((err) => {});
       }
     },
-    completeOrder(id){
-      HTTP.put("Order/completeOrder/"+id).then((result) => {
-        this.items.forEach(z => {
-          if(z["Order Id"] == id) {
-          z.Completed = true
-        }})
-        console.log(this.items)
-        this.filterOrder()
-      }).catch((err) => {
-        
-      });
+    completeOrder(id) {
+      HTTP.put("Order/completeOrder/" + id)
+        .then((result) => {
+          this.items.forEach((z) => {
+            if (z["Order Id"] == id) {
+              z.Completed = true;
+            }
+          });
+          this.filterOrder();
+        })
+        .catch((err) => {});
     },
     deleteOrder(id) {
       Swal.fire({
@@ -194,20 +189,14 @@ export default {
       });
     },
     getRole(data) {
-      //console.log(data.item["User Id"])
-      console.log(this.roles.filter((z) => z.id == data.item.Role));
       return this.roles.filter((z) => z.id == data.item.Role)[0];
     },
     filterOrder: function () {
-      // console.log("filter")
       this.filtredItems = this.items.filter((e) =>
         this.searchTerm == ""
           ? true
-          : e["User Name"]
-              .toLowerCase()
-              .includes(this.searchTerm.toLowerCase())
+          : e["User Name"].toLowerCase().includes(this.searchTerm.toLowerCase())
       );
-      // console.log(this.filtredMovies , this.movies)
     },
   },
   watch: {
